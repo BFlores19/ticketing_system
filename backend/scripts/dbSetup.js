@@ -6,11 +6,7 @@ require("dotenv").config();
 // Initialize connection pool
 const pool = new Pool({
   connectionString:
-<<<<<<< HEAD
   	"postgresql://cesar:klk1234klk@127.0.0.1:5432/capstonedatabase",
-=======
-  	"postgresql://ticketing_user:ticketing_pass@127.0.0.1:5432/ticketing_system",
->>>>>>> 8edff66 (fixed connection string)
 	//ssl: { rejectUnauthorized: false }, // Only needed if using SSL in production
 });
 
