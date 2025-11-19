@@ -84,7 +84,8 @@ router.put(
 router.put(
   "/:ticket_id/edit",
   authMiddleware.verifyToken,
-  authMiddleware.isStaff,
+  authMiddleware.isTAOrAdmin,
+  authMiddleware.isAssignedToTicket,
   ticketController.editTicket
 );
 
