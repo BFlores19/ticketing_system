@@ -21,6 +21,22 @@ const authMiddleware = {
     });
 },
 
+tryAttachUser: (req, _res, next) => {
+    const header = req.headers["authorization"];
+    if (!header) return next();
+
+    const parts = header.split(" ");
+    const bearerToken = parts.length === 2 ? parts[1] : header;
+
+    try {
+      req.user = jwt.verify(bearerToken, process.env.JWT_SECRET);
+    } catch (err) {
+      console.warn("Optional auth failed for bug report submission", err?.message || err);
+    }
+
+    next();
+  },
+
 isAdmin: (req, res, next) => {
   console.log("Checking Admin Privileges:", req.user);
   if (req.user && req.user.role === "admin") {
