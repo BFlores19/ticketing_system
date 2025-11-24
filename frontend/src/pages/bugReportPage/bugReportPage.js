@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Cookies from "js-cookie";
 import {
   Alert,
   Box,
@@ -20,10 +21,15 @@ export default function BugReportPage() {
     e.preventDefault();
     setSubmitting(true);
     setResult(null);
+    const token = Cookies.get("token");
+
     try {
       const res = await fetch(`${process.env.REACT_APP_API_BASE_URL || ""}/api/bug-reports`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         credentials: "include",
         body: JSON.stringify(form),
       });
@@ -136,4 +142,7 @@ return (
     </Box>
   );
 }
+
+
+
 
