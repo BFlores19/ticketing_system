@@ -17,7 +17,7 @@ module.exports = {
       reporter_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
-        references: { model: 'users', key: 'user_id' },   // change key to 'user_id' if that’s your PK
+        references: { model: 'users', key: 'user_id' },   
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },

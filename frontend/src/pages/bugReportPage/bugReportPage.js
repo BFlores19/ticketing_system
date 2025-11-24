@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Box, Button, TextField, Typography, Alert } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import BugReportIcon from "@mui/icons-material/BugReport";
 
 export default function BugReportPage() {
   const [form, setForm] = useState({ subject: "", description: "" });
@@ -28,21 +37,103 @@ export default function BugReportPage() {
     }
   };
 
-  return (
-    <Box p={3} maxWidth={720} mx="auto">
-      <Typography variant="h4" gutterBottom>Report a Bug</Typography>
-      {result && <Alert severity={result.type} sx={{ mb: 2 }}>{result.msg}</Alert>}
-      <Box component="form" onSubmit={onSubmit} display="grid" gap={2}>
-        <TextField label="Subject" name="subject" value={form.subject} onChange={onChange} required />
-        <TextField label="Description" name="description" value={form.description} onChange={onChange}
-                   multiline minRows={4} required />
-        <Button type="submit" variant="contained" disabled={submitting}>
-          {submitting ? "Submitting…" : "Submit Bug"}
-        </Button>
-      </Box>
+
+return (
+    <Box
+      minHeight="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      sx={{
+        background: (theme) =>
+          `linear-gradient(135deg, ${theme.palette.primary.dark}11, ${theme.palette.secondary.main}22)`,
+        p: 3,
+      }}
+    >
+      <Paper
+        elevation={6}
+        sx={{
+          width: "100%",
+          maxWidth: 720,
+          p: { xs: 3, md: 5 },
+          borderRadius: 4,
+          backdropFilter: "blur(4px)",
+        }}
+      >
+        <Stack spacing={3}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Box
+              sx={{
+                width: 56,
+                height: 56,
+                borderRadius: 3,
+                bgcolor: (theme) => theme.palette.primary.main,
+                color: "primary.contrastText",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <BugReportIcon fontSize="large" />
+            </Box>
+            <Box>
+              <Typography variant="overline" color="text.secondary">
+                Help Us Improve
+              </Typography>
+              <Typography variant="h4" component="h1">
+                Report a Bug
+              </Typography>
+              <Typography color="text.secondary">
+                Share what went wrong and our engineers will jump on it as soon as possible.
+              </Typography>
+            </Box>
+          </Stack>
+
+          {result && (
+            <Alert severity={result.type} onClose={() => setResult(null)}>
+              {result.msg}
+            </Alert>
+          )}
+
+          <Box component="form" onSubmit={onSubmit} display="grid" gap={3}>
+            <TextField
+              label="Subject"
+              name="subject"
+              value={form.subject}
+              onChange={onChange}
+              required
+              placeholder="E.g. Unable to upload attachments"
+              fullWidth
+            />
+            <TextField
+              label="Description"
+              name="description"
+              value={form.description}
+              onChange={onChange}
+              multiline
+              minRows={5}
+              required
+              placeholder="Tell us what happened, the steps to reproduce it, and any context that might help."
+              fullWidth
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              disabled={submitting}
+              sx={{
+                py: 1.4,
+                textTransform: "none",
+                fontWeight: 600,
+                boxShadow: (theme) => theme.shadows[4],
+              }}
+            >
+              {submitting ? "Submitting…" : "Submit Bug"}
+            </Button>
+          </Box>
+        </Stack>
+      </Paper>
     </Box>
   );
 }
 
-
-// INFO NEEDED: Should we have bug categories? Like UI issues or service issues?
