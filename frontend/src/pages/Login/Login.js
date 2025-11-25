@@ -123,9 +123,11 @@ export default function SignIn() {
             }
 
             const { token } = await response.json();
+            
+            const isSecureContext = window?.location?.protocol === "https:";
 
             Cookies.set("token", token, {
-                secure: true,
+                secure: isSecureContext,
                 sameSite: "Strict",
                 expires: rememberMe ? 7 : undefined
             });
@@ -134,8 +136,8 @@ export default function SignIn() {
             const userType = decoded.role;
             const userId = decoded.id;
             const userName = decoded.name;
-            Cookies.set("user_id", userId, { secure: true, sameSite: "Strict" });
-            Cookies.set("name", userName, { secure: true, sameSite: "Strict" });
+            Cookies.set("user_id", userId, { secure: isSecureContext, sameSite: "Strict" });
+            Cookies.set("name", userName, { secure: isSecureContext, sameSite: "Strict" });
 
             try {
                 window.dispatchEvent(new CustomEvent('userChanged'));
