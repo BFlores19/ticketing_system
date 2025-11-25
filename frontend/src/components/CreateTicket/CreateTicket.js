@@ -21,12 +21,48 @@ const CreateTicket = ({ onClose }) => {
   const [taList, setTaList] = useState([]); // Initialize as empty array
   const [teamList, setTeamList] = useState([]); // Initialize as empty array for teams
   const [graderList, setGraderList] = useState([]);
-  // const [asuId, setAsuId] = useState(""); 
+
+    const [teamId, setTeamId] = useState("");
+  // const [asuId, setAsuId] = useState("");
   useEffect(() => {
       fetchUsersByRole("TA", setTaList);
       fetchUsersByRole("grader", setGraderList);
       fetchTeams();
+      autoFillStudentData();
   }, []);
+
+    // Fetches all students and picks the current one
+    const autoFillStudentData = async () => {
+        try {
+            const token = Cookies.get("token");
+            const currentUserId = Cookies.get("user_id"); // Ensure this cookie exists
+
+            const response = await fetch(`${baseURL}/api/users/role/student`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) throw new Error("Failed to fetch student profile");
+
+            const students = await response.json();
+
+            // Find the student matching the current logged-in ID
+            const me = students.find(s => String(s.user_id) === String(currentUserId));
+
+            if (me) {
+                setStudentName(me.name || "");
+                setSection(me.section || "");
+                setSponsorName(me.sponsor || "");
+                // Important: teamName state in your code stores the team_id
+                setTeamName(me.team_name || "");
+            }
+        } catch (error) {
+            console.error("Auto-fill failed:", error);
+        }
+    };
 
     const fetchUsersByRole = async (role, setter) => {
         try {
@@ -163,7 +199,7 @@ const CreateTicket = ({ onClose }) => {
              display: 'flex',
              justifyContent: 'center',
              alignItems: 'center',
-             zIndex: 1000,
+             Index: 1000,
              pl: '250px',
              pt: '50px',
          }}
@@ -181,8 +217,8 @@ const CreateTicket = ({ onClose }) => {
            }}
       >
         {/* Close button */}
-        <Button 
-          className="close-button" 
+        <Button
+          className="close-button"
           onClick={onClose}
           sx={{
             position: "absolute",
@@ -202,9 +238,9 @@ const CreateTicket = ({ onClose }) => {
         </Button>
 
         {/* Form Content */}
-          <Typography variant="h4" sx={{ 
-              mb: 2, 
-              fontWeight: 'bold', 
+          <Typography variant="h4" sx={{
+              mb: 2,
+              fontWeight: 'bold',
               textAlign: 'center',
               color: theme.palette.text.primary
           }}>
@@ -214,11 +250,10 @@ const CreateTicket = ({ onClose }) => {
               <TextField
                   label="Student Name"
                   variant="outlined"
-                  placeholder="Enter your name"
                   value={studentName}
                   onChange={(e) => setStudentName(e.target.value)}
-                  required
                   fullWidth
+                  disabled
               />
           {/* <label>ASU ID:</label>
           <input
@@ -232,11 +267,10 @@ const CreateTicket = ({ onClose }) => {
               <TextField
                   label="Section"
                   variant="outlined"
-                  placeholder="Enter your section"
                   value={section}
                   onChange={(e) => setSection(e.target.value)}
-                  required
                   fullWidth
+                  disabled
               />
               <FormControl fullWidth required>
                   <InputLabel>Team</InputLabel>
@@ -256,12 +290,32 @@ const CreateTicket = ({ onClose }) => {
               <TextField
                   label="Sponsor Name"
                   variant="outlined"
-                  placeholder="Enter your Sponsor's name"
                   value={sponsorName}
                   onChange={(e) => setSponsorName(e.target.value)}
-                  required
                   fullWidth
+                  disabled
               />
+              <FormControl fullWidth required>
+                  <InputLabel>Issue Type</InputLabel>
+                  <Select
+                      value={issueType}
+                      label="Issue Type"
+                      placeholder="Select a issue type"
+                      onChange={(e) => setIssueType(e.target.value)}
+                  >
+                      <MenuItem value="sponsorIssue">Issues communicating with the Sponsor</MenuItem>
+                      <MenuItem value="sponsorWorkingIssue">Issues working with the Sponsor</MenuItem>
+                      <MenuItem value="teamIssue">Issues within the Team</MenuItem>
+                      <MenuItem value="teamMemberIssue">Issues with a team mate</MenuItem>
+                      <MenuItem value="gradeAppeal">Appeal to an assignment grade </MenuItem>
+                      <MenuItem value="extensionRequest">Request an extension for an assignment</MenuItem>
+                      <MenuItem value="accommodationRequest">Request an accommodation for the course</MenuItem>
+                      <MenuItem value="generalQuestion">General questions about the course</MenuItem>
+                      <MenuItem value="Feature Request">Feature Request</MenuItem>
+                      <MenuItem value="Question">Question about this system</MenuItem>
+                      <MenuItem value="other">Other</MenuItem>
+                  </Select>
+              </FormControl>
               <FormControl fullWidth required>
                   <InputLabel>
                       {issueType === "gradeAppeal" ? "Assigned Grader" : "Assigned TA"}
@@ -284,27 +338,6 @@ const CreateTicket = ({ onClose }) => {
                               </MenuItem>
                           ))
                       }
-                  </Select>
-              </FormControl>
-              <FormControl fullWidth required>
-                  <InputLabel>Issue Type</InputLabel>
-                  <Select
-                      value={issueType}
-                      label="Issue Type"
-                      placeholder="Select a issue type"
-                      onChange={(e) => setIssueType(e.target.value)}
-                  >
-                      <MenuItem value="sponsorIssue">Issues communicating with the Sponsor</MenuItem>
-                      <MenuItem value="sponsorWorkingIssue">Issues working with the Sponsor</MenuItem>
-                      <MenuItem value="teamIssue">Issues within the Team</MenuItem>
-                      <MenuItem value="teamMemberIssue">Issues with a team mate</MenuItem>
-                      <MenuItem value="gradeAppeal">Appeal to an assignment grade </MenuItem>
-                      <MenuItem value="extensionRequest">Request an extension for an assignment</MenuItem>
-                      <MenuItem value="accommodationRequest">Request an accommodation for the course</MenuItem>
-                      <MenuItem value="generalQuestion">General questions about the course</MenuItem>
-                      <MenuItem value="Feature Request">Feature Request</MenuItem>
-                      <MenuItem value="Question">Question about this system</MenuItem>
-                      <MenuItem value="other">Other</MenuItem>
                   </Select>
               </FormControl>
               <TextField
