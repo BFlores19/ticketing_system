@@ -218,7 +218,10 @@ exports.changePassword = async (req, res) => {
     const saltRounds = 10;
     const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
 
-    await user.update({ password: hashedNewPassword });
+    await user.update({ 
+      password: hashedNewPassword,
+      must_change_password: false 
+    });
 
     res.json({ message: "Password updated successfully" });
   } catch (error) {
