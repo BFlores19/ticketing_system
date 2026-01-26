@@ -264,6 +264,8 @@ export default function SignIn() {
                             >
                                 Sign in
                             </Button>
+
+                            {/*
                             <Typography>
                                 Don&apos;t have an account?{" "}
                                 <span>
@@ -275,7 +277,7 @@ export default function SignIn() {
                   Sign up
                 </Link>
               </span>
-                            </Typography>
+                            </Typography> */}
                         </Box>
                     </MuiCard>
                     {/* Sparky (right) */}
