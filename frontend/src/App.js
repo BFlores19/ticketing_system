@@ -26,6 +26,7 @@ import InstructorProfile from "./pages/InstructorProfile/InstructorProfile";
 import EscalatedTickets from "./pages/EscalatedTickets/EscalatedTickets";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import RequestReset from "./pages/RequestReset/RequestReset";
+import ChangePassword from "./pages/ChangePassword/ChangePassword";
 import TaRequestTickets from "./pages/InstructorTickets/TaRequestTickets";
 import TaTicketView from "./components/TicketView/TaTicketView";
 import TaTicketInfo from "./pages/TicketInfo/TaTicketInfo";
@@ -42,6 +43,17 @@ function App() {
       <Route path="/registration" element={<Registration />} />
       <Route path="/resetpassword" element={<ResetPassword />} />
       <Route path="/requestreset" element={<RequestReset />} />
+      
+      {/* Change password - protected but without navbar (forced flow) */}
+      <Route 
+        path="/change-password" 
+        element={
+          <ProtectedRoute
+            element={<ChangePassword />}
+            authorizedRoles={["admin", "student", "TA"]}
+          />
+        } 
+      />
 
       {/*Verify that user is logged in before rendering any of these routes*/}
       <Route
