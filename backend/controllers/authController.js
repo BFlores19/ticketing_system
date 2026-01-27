@@ -82,7 +82,7 @@ exports.register = async (req, res) => {
 
         Please change your password after your first login. Password is generated for one time use.
 
-        If you have any question or need assistance, please contact your instructor or reach out for assistance
+        If you have any questions or need assistance, please contact your instructor or reach out for assistance
 
         Best regards,
         ASU Capstone Help Desk Team`;
