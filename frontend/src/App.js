@@ -34,6 +34,10 @@ import BulkUpload from "./pages/BulkUpload/BulkUpload";
 import ManageStudents from "./pages/ManageUsers/ManageStudents";
 import ManageTAs from "./pages/ManageUsers/ManageTAs";
 import ManageAdmins from "./pages/ManageUsers/ManageAdmins";
+import ManageGraders from "./pages/ManageUsers/ManageGraders";
+import GraderDash from "./pages/GraderDash/GraderDash";
+import GraderTickets from "./pages/GraderTickets/GraderTickets";
+import GraderSettings from "./pages/Settings/GraderSettings";
 
 function App() {
   return (
@@ -49,7 +53,7 @@ function App() {
         element={
           <ProtectedRoute
             element={<NavBarLayout />}
-            authorizedRoles={["admin", "student", "TA"]}
+            authorizedRoles={["admin", "student", "TA", "grader"]}
           />
         }
       >
@@ -62,8 +66,10 @@ function App() {
         <Route path="/managestudents" element={<ManageStudents />} />
         <Route path="/bulkupload" element={<BulkUpload />} />
         <Route path="/ManageTAs" element={<ManageTAs />} />
+        <Route path="/ManageGraders" element={<ManageGraders />} />
         <Route path="/tasettings" element={<TASettings />} />
         <Route path="/studentsettings" element={<StudentSettings />} />
+        <Route path="/gradersettings" element={<GraderSettings />} />
         <Route path="/ticketview" element={<TicketView />} />
 	      <Route path="/instructorprofile" element={<InstructorProfile />} />
           <Route path="/taticketview" element={<TaTicketView />} />
@@ -83,6 +89,7 @@ function App() {
         <Route path="/instructortickets" element={<InstructorTickets />} />
         <Route path="/TaRequestTickets" element={<TaRequestTickets />} />
         <Route path="/ta-info" element={<TAinfo />} />
+        <Route path="/gradertickets" element={<GraderTickets />} />
 
         {/*Verify the correct user type for dashboards*/}
         <Route
@@ -112,6 +119,15 @@ function App() {
             />
           }
         />
+          <Route
+              path="/graderdash"
+              element={
+                  <ProtectedRoute
+                      element={<GraderDash />}
+                      authorizedRoles={["grader"]}
+                  />
+              }
+          />
           {/*Manage Users pages */}
           <Route
               path="/managestudents"
@@ -136,6 +152,15 @@ function App() {
               element={
               <ProtectedRoute
               element={<ManageAdmins />}
+              authorizedRoles={["admin"]}/>
+              }
+          />
+
+          <Route
+              path="/manageGraders"
+              element={
+              <ProtectedRoute
+              element={<ManageGraders />}
               authorizedRoles={["admin"]}/>
               }
           />

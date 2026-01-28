@@ -95,7 +95,7 @@ exports.deleteUser = async (req, res) => {
 exports.getUsersByRole = async (req, res) => {
     try {
         const { role } = req.params;
-        const validRoles = ["student", "TA", "admin"];
+        const validRoles = ["student", "TA", "admin", "grader"];
 
         if (!validRoles.includes(role)) {
             return res.status(400).json({ error: "Invalid role specified" });
