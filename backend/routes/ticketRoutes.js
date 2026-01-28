@@ -11,6 +11,12 @@ router.get(
   ticketController.getAllTickets
 );
 router.get(
+  "/assigned-to-me",
+  authMiddleware.verifyToken,
+  authMiddleware.isTA,
+  ticketController.getTicketsAssignedToUser
+);
+router.get(
   "/user/:user_id",
   authMiddleware.verifyToken,
   ticketController.getTicketsByUserId
@@ -40,6 +46,7 @@ router.put(
   "/:ticket_id",
   authMiddleware.verifyToken,
   authMiddleware.isStudentOrTAOrAdmin,
+  authMiddleware.isAssignedToTicket,
   ticketController.updateTicket
 );
 router.delete(
@@ -51,6 +58,7 @@ router.delete(
 router.put(
   "/:ticket_id/status",
   authMiddleware.verifyToken,
+  authMiddleware.isAssignedToTicket,
   authMiddleware.isStaff,
   ticketController.updateTicketStatus
 );
@@ -77,6 +85,7 @@ router.put(
   "/:ticket_id/edit",
   authMiddleware.verifyToken,
   authMiddleware.isStaff,
+  authMiddleware.isAssignedToTicket,
   ticketController.editTicket
 );
 

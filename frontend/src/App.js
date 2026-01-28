@@ -21,12 +21,12 @@ import TicketQueue from "./pages/TicketQueue/TicketQueue";
 import Unauthorized from "./pages/Unauthorized/Unauthorized";
 import Registration from "./pages/Registration/Registration";
 import Profile from "./pages/Profile/Profile";
-import StudentTickets from "./pages/StudentTickets/StudentTickets";
 import InstructorTickets from "./pages/InstructorTickets/InstructorTickets";
 import InstructorProfile from "./pages/InstructorProfile/InstructorProfile"; 
 import EscalatedTickets from "./pages/EscalatedTickets/EscalatedTickets";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import RequestReset from "./pages/RequestReset/RequestReset";
+import ChangePassword from "./pages/ChangePassword/ChangePassword";
 import TaRequestTickets from "./pages/InstructorTickets/TaRequestTickets";
 import TaTicketView from "./components/TicketView/TaTicketView";
 import TaTicketInfo from "./pages/TicketInfo/TaTicketInfo";
@@ -47,6 +47,17 @@ function App() {
       <Route path="/registration" element={<Registration />} />
       <Route path="/resetpassword" element={<ResetPassword />} />
       <Route path="/requestreset" element={<RequestReset />} />
+      
+      {/* Change password - protected but without navbar (forced flow) */}
+      <Route 
+        path="/change-password" 
+        element={
+          <ProtectedRoute
+            element={<ChangePassword />}
+            authorizedRoles={["admin", "student", "TA"]}
+          />
+        } 
+      />
 
       {/*Verify that user is logged in before rendering any of these routes*/}
       <Route
@@ -85,7 +96,7 @@ function App() {
         {/* Testing Pages */}
 
         {/* Change user_id to the user's id */}
-        <Route path="/mytickets" element={<StudentTickets />} />
+        <Route path="/mytickets" element={<MyTickets />} />
         <Route path="/instructortickets" element={<InstructorTickets />} />
         <Route path="/TaRequestTickets" element={<TaRequestTickets />} />
         <Route path="/ta-info" element={<TAinfo />} />
