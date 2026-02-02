@@ -136,6 +136,7 @@ const ChangePassword = () => {
       if (userRole === "admin") navigate("/admindash");
       else if (userRole === "student") navigate("/studentdash");
       else if (userRole === "TA") navigate("/instructordash");
+      else if (userRole === "grader") navigate("/graderdash");
 
     } catch (error) {
       console.error("Error changing password:", error);

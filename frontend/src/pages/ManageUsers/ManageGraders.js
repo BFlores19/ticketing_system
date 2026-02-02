@@ -27,6 +27,7 @@ import {
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
 import ConfirmTADelete from "../../components/ConfirmTADelete/ConfirmTADelete";
+import {generateRandomPassword} from "../../services/generateRandomPass";
 
 const ManageGraders = () => {
     // Master list of all TAs from API
@@ -185,10 +186,10 @@ const ManageGraders = () => {
             return;
         }
 
-        const defaultPassword = await encryptPassword(`password`); // Encrypt the default password
+        const defaultPassword = generateRandomPassword();  // Encrypt the default password
         try {
             const response = await fetch(
-                `${process.env.REACT_APP_API_BASE_URL}/api/users`,
+                `${process.env.REACT_APP_API_BASE_URL}/api/auth/register`,
                 {
                     method: "POST",
                     headers: {
@@ -200,6 +201,7 @@ const ManageGraders = () => {
                         email: newGraderEmail,
                         role: "grader",
                         password: defaultPassword, // Default password
+                        must_change_password: true
                     }),
                 }
             );
@@ -436,7 +438,7 @@ const ManageGraders = () => {
                         <TextField
                             fullWidth
                             value={newGraderName}
-                            placeholder="New TA Name"
+                            placeholder="New Grader Name"
                             onChange={(e) => setNewGraderName(e.target.value)}
                             variant="outlined"
                             size="small"
@@ -445,7 +447,7 @@ const ManageGraders = () => {
                             fullWidth
                             type="email"
                             value={newGraderEmail}
-                            placeholder="New TA Email"
+                            placeholder="New Grader Email"
                             onChange={(e) => setNewGraderEmail(e.target.value)}
                             variant="outlined"
                             size="small"
@@ -455,7 +457,7 @@ const ManageGraders = () => {
                             onClick={addGrader}
                             sx={{ backgroundColor: theme.palette.primary.main, whiteSpace: 'nowrap' }}
                         >
-                            Add TA
+                            Add
                         </Button>
                     </Box>
                 </Box>
@@ -466,7 +468,7 @@ const ManageGraders = () => {
                         value={filterStatus}
                         exclusive
                         onChange={handleFilterChange}
-                        aria-label="Filter TA status"
+                        aria-label="Filter Grader status"
                     >
                         <ToggleButton value="all">All</ToggleButton>
                         <ToggleButton value="enabled">Enabled</ToggleButton>

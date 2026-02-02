@@ -27,6 +27,7 @@ const addGrader  = async (name, email, password) => {
                 email: email,
                 password: password,
                 role: "grader",
+                must_change_password: true
             }),
         });
 
