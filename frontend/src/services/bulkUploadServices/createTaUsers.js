@@ -26,7 +26,8 @@ const addTA  = async (name, email, password) => {
         name: name,
         email: email,
         password: password,
-        role: "TA",  
+        role: "TA",
+        must_change_password: true
       }),
     });
 

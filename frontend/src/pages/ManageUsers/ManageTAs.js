@@ -27,6 +27,7 @@ import {
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
 import ConfirmTADelete from "../../components/ConfirmTADelete/ConfirmTADelete";
+import {generateRandomPassword} from "../../services/generateRandomPass";
 
 const ManageTAs = () => {
     // Master list of all TAs from API
@@ -185,10 +186,10 @@ const ManageTAs = () => {
             return;
         }
 
-        const defaultPassword = await encryptPassword(`password`); // Encrypt the default password
+        const defaultPassword = generateRandomPassword(); // Encrypt the default password
         try {
             const response = await fetch(
-                `${process.env.REACT_APP_API_BASE_URL}/api/users`,
+                `${process.env.REACT_APP_API_BASE_URL}/api/auth/register`,
                 {
                     method: "POST",
                     headers: {
@@ -200,6 +201,7 @@ const ManageTAs = () => {
                         email: newTAEmail,
                         role: "TA",
                         password: defaultPassword, // Default password
+                        must_change_password: true
                     }),
                 }
             );

@@ -42,6 +42,7 @@ import GraderSettings from "./pages/Settings/GraderSettings";
 function App() {
   return (
     <Routes>
+        {/* --- PUBLIC ROUTES --- */}
       <Route path="/login" element={<Login />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/registration" element={<Registration />} />
@@ -54,7 +55,7 @@ function App() {
         element={
           <ProtectedRoute
             element={<ChangePassword />}
-            authorizedRoles={["admin", "student", "TA"]}
+            authorizedRoles={["admin", "student", "TA", "grader"]}
           />
         } 
       />
