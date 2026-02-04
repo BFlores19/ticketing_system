@@ -20,30 +20,31 @@ const CreateTicket = ({ onClose }) => {
   const [description, setDescription] = useState("");
   const [taList, setTaList] = useState([]); // Initialize as empty array
   const [teamList, setTeamList] = useState([]); // Initialize as empty array for teams
+  const [graderList, setGraderList] = useState([]);
   // const [asuId, setAsuId] = useState(""); 
   useEffect(() => {
-    fetchTAs();
-    fetchTeams();
+      fetchUsersByRole("TA", setTaList);
+      fetchUsersByRole("grader", setGraderList);
+      fetchTeams();
   }, []);
 
-  // Fetch TA users from the API
-  const fetchTAs = async () => {
-    try {
-      const token = Cookies.get("token");
-      const response = await fetch(`${baseURL}/api/users/role/TA`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setTaList(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Failed to fetch TAs:", error);
-      setTaList([]); // Fallback to empty array
-    }
-  };
+    const fetchUsersByRole = async (role, setter) => {
+        try {
+            const token = Cookies.get("token");
+            const response = await fetch(`${baseURL}/api/users/role/${role}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+            setter(Array.isArray(data) ? data : []);
+        } catch (error) {
+            console.error(`Failed to fetch ${role}s:`, error);
+            setter([]);
+        }
+    };
 
   // Fetch Teams from the API
   const fetchTeams = async () => {
@@ -262,18 +263,27 @@ const CreateTicket = ({ onClose }) => {
                   fullWidth
               />
               <FormControl fullWidth required>
-                  <InputLabel>Instructor (TA)</InputLabel>
+                  <InputLabel>
+                      {issueType === "gradeAppeal" ? "Assigned Grader" : "Assigned TA"}
+                  </InputLabel>
                   <Select
                       value={instructorName}
-                      label="Instructor (TA)"
-                      placeholder="Select a instructor (TA)"
+                      label={issueType === "gradeAppeal" ? "Assigned Grader" : "Assigned TA"}
                       onChange={(e) => setInstructorName(e.target.value)}
+                      disabled={!issueType} // Disable until an issue type is picked
                   >
-                      {taList.map((ta) => (
-                          <MenuItem key={ta.user_id} value={ta.user_id}>
-                              {ta.name}
-                          </MenuItem>
-                      ))}
+                      {issueType === "gradeAppeal"
+                          ? graderList.map((grader) => (
+                              <MenuItem key={grader.user_id} value={grader.user_id}>
+                                  {grader.name} (Grader)
+                              </MenuItem>
+                          ))
+                          : taList.map((ta) => (
+                              <MenuItem key={ta.user_id} value={ta.user_id}>
+                                  {ta.name} (TA)
+                              </MenuItem>
+                          ))
+                      }
                   </Select>
               </FormControl>
               <FormControl fullWidth required>
@@ -284,12 +294,16 @@ const CreateTicket = ({ onClose }) => {
                       placeholder="Select a issue type"
                       onChange={(e) => setIssueType(e.target.value)}
                   >
-                      <MenuItem value="sponsorIssue">Issues with Sponsor</MenuItem>
+                      <MenuItem value="sponsorIssue">Issues communicating with the Sponsor</MenuItem>
+                      <MenuItem value="sponsorWorkingIssue">Issues working with the Sponsor</MenuItem>
                       <MenuItem value="teamIssue">Issues within the Team</MenuItem>
-                      <MenuItem value="assignmentIssue">Issues with Assignments</MenuItem>
-                      <MenuItem value="Bug">Bug</MenuItem>
+                      <MenuItem value="teamMemberIssue">Issues with a team mate</MenuItem>
+                      <MenuItem value="gradeAppeal">Appeal to an assignment grade </MenuItem>
+                      <MenuItem value="extensionRequest">Request an extension for an assignment</MenuItem>
+                      <MenuItem value="accommodationRequest">Request an accommodation for the course</MenuItem>
+                      <MenuItem value="generalQuestion">General questions about the course</MenuItem>
                       <MenuItem value="Feature Request">Feature Request</MenuItem>
-                      <MenuItem value="Question">Question</MenuItem>
+                      <MenuItem value="Question">Question about this system</MenuItem>
                       <MenuItem value="other">Other</MenuItem>
                   </Select>
               </FormControl>

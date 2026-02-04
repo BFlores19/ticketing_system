@@ -7,7 +7,7 @@ const router = express.Router();
 router.get(
   "/",
   authMiddleware.verifyToken,
-  authMiddleware.isTAOrAdmin, //changed 2/20/25 to allow TA to view tickets on instructor dashboard
+  authMiddleware.isStaff, //changed 2/20/25 to allow TA to view tickets on instructor dashboard
   ticketController.getAllTickets
 );
 router.get(
@@ -51,7 +51,7 @@ router.delete(
 router.put(
   "/:ticket_id/status",
   authMiddleware.verifyToken,
-  authMiddleware.isTAOrAdmin,
+  authMiddleware.isStaff,
   ticketController.updateTicketStatus
 );
 router.put(
@@ -76,7 +76,7 @@ router.put(
 router.put(
   "/:ticket_id/edit",
   authMiddleware.verifyToken,
-  authMiddleware.isAdmin,
+  authMiddleware.isStaff,
   ticketController.editTicket
 );
 
