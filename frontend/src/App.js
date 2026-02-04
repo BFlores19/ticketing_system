@@ -34,6 +34,7 @@ import BulkUpload from "./pages/BulkUpload/BulkUpload";
 import ManageStudents from "./pages/ManageUsers/ManageStudents";
 import ManageTAs from "./pages/ManageUsers/ManageTAs";
 import ManageAdmins from "./pages/ManageUsers/ManageAdmins";
+import ManageStudents from "./pages/ManageStudents/ManageStudents";
 import BugReportPage from "./pages/bugReportPage/bugReportPage";
 
 function App() {

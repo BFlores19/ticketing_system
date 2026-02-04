@@ -37,6 +37,7 @@ export default function BugReportPage() {
     }
   };
 
+<<<<<<< HEAD
 
 return (
     <Box
@@ -137,3 +138,20 @@ return (
   );
 }
 
+=======
+  return (
+    <Box p={3} maxWidth={720} mx="auto">
+      <Typography variant="h4" gutterBottom>Report a Bug</Typography>
+      {result && <Alert severity={result.type} sx={{ mb: 2 }}>{result.msg}</Alert>}
+      <Box component="form" onSubmit={onSubmit} display="grid" gap={2}>
+        <TextField label="Subject" name="subject" value={form.subject} onChange={onChange} required />
+        <TextField label="Description" name="description" value={form.description} onChange={onChange}
+                   multiline minRows={4} required />
+        <Button type="submit" variant="contained" disabled={submitting}>
+          {submitting ? "Submitting…" : "Submit Bug"}
+        </Button>
+      </Box>
+    </Box>
+  );
+}
+>>>>>>> c994bba (more updates to the bug report page)
