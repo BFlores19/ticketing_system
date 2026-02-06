@@ -58,8 +58,8 @@ router.delete(
 router.put(
   "/:ticket_id/status",
   authMiddleware.verifyToken,
-  authMiddleware.isTAOrAdmin,
   authMiddleware.isAssignedToTicket,
+  authMiddleware.isStaff,
   ticketController.updateTicketStatus
 );
 router.put(
@@ -84,7 +84,7 @@ router.put(
 router.put(
   "/:ticket_id/edit",
   authMiddleware.verifyToken,
-  authMiddleware.isTAOrAdmin,
+  authMiddleware.isStaff,
   authMiddleware.isAssignedToTicket,
   ticketController.editTicket
 );
