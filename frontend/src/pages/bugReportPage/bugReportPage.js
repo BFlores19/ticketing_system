@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Cookies from "js-cookie";
 import {
   Alert,
   Box,
@@ -21,9 +22,14 @@ export default function BugReportPage() {
     setSubmitting(true);
     setResult(null);
     try {
+      const token = Cookies.get("token");
+      if (!token) throw new Error("No token found. Please log in again.");
       const res = await fetch(`${process.env.REACT_APP_API_BASE_URL || ""}/api/bug-reports`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         credentials: "include",
         body: JSON.stringify(form),
       });
