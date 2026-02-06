@@ -18,7 +18,7 @@ const User = sequelize.define("User", {
     unique: true,
   },
   role: {
-    type: DataTypes.ENUM("student", "TA", "admin"),
+    type: DataTypes.ENUM("student", "TA", "admin", "grader"),
     allowNull: false,
   },
   password: {
@@ -36,6 +36,10 @@ const User = sequelize.define("User", {
   is_enabled: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
+  },
+  must_change_password: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
 }, {
   tableName: 'users',

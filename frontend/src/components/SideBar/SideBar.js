@@ -70,6 +70,9 @@ const SideBar = () => {
             } else if (userType == "TA") {
               navigate("/instructordash");
             }
+            else if (userType == "grader") {
+                navigate("/graderdash");
+            }
           }}
         >
               <ListItemIcon>
@@ -144,6 +147,23 @@ const SideBar = () => {
               </ListItemButton>
     </>
               )}
+
+          {/* Grader "My Tickets" Button */}
+          {userType === "grader" && (
+              <ListItemButton
+                  className="buttonStyle"
+                  selected={selectedPage === 1}
+                  onClick={() => {
+                      setSelectedPage(1);
+                      navigate("/gradertickets");
+                  }}
+              >
+                  <ListItemIcon>
+                      <ListIcon className="iconStyle" />
+                  </ListItemIcon>
+                  <ListItemText className="fontStyle" primary="My Tickets" />
+              </ListItemButton>
+          )}
 
       { userType === "admin" && (
       <ListItemButton
@@ -232,7 +252,10 @@ const SideBar = () => {
               navigate("/tasettings");
             } else if (userType === "student") {
               navigate("/studentsettings");
+            } else if (userType === "grader") {
+                navigate("/gradersettings");
             }
+
           }}
           selected={selectedPage === 4}
         >

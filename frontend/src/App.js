@@ -21,12 +21,12 @@ import TicketQueue from "./pages/TicketQueue/TicketQueue";
 import Unauthorized from "./pages/Unauthorized/Unauthorized";
 import Registration from "./pages/Registration/Registration";
 import Profile from "./pages/Profile/Profile";
-import StudentTickets from "./pages/StudentTickets/StudentTickets";
 import InstructorTickets from "./pages/InstructorTickets/InstructorTickets";
 import InstructorProfile from "./pages/InstructorProfile/InstructorProfile"; 
 import EscalatedTickets from "./pages/EscalatedTickets/EscalatedTickets";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import RequestReset from "./pages/RequestReset/RequestReset";
+import ChangePassword from "./pages/ChangePassword/ChangePassword";
 import TaRequestTickets from "./pages/InstructorTickets/TaRequestTickets";
 import TaTicketView from "./components/TicketView/TaTicketView";
 import TaTicketInfo from "./pages/TicketInfo/TaTicketInfo";
@@ -35,22 +35,38 @@ import ManageStudents from "./pages/ManageUsers/ManageStudents";
 import ManageTAs from "./pages/ManageUsers/ManageTAs";
 import ManageAdmins from "./pages/ManageUsers/ManageAdmins";
 import BugReportPage from "./pages/bugReportPage/bugReportPage";
+import ManageGraders from "./pages/ManageUsers/ManageGraders";
+import GraderDash from "./pages/GraderDash/GraderDash";
+import GraderTickets from "./pages/GraderTickets/GraderTickets";
+import GraderSettings from "./pages/Settings/GraderSettings";
 
 function App() {
   return (
     <Routes>
+        {/* --- PUBLIC ROUTES --- */}
       <Route path="/login" element={<Login />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/registration" element={<Registration />} />
       <Route path="/resetpassword" element={<ResetPassword />} />
       <Route path="/requestreset" element={<RequestReset />} />
+      
+      {/* Change password - protected but without navbar (forced flow) */}
+      <Route 
+        path="/change-password" 
+        element={
+          <ProtectedRoute
+            element={<ChangePassword />}
+            authorizedRoles={["admin", "student", "TA", "grader"]}
+          />
+        } 
+      />
 
       {/*Verify that user is logged in before rendering any of these routes*/}
       <Route
         element={
           <ProtectedRoute
             element={<NavBarLayout />}
-            authorizedRoles={["admin", "student", "TA"]}
+            authorizedRoles={["admin", "student", "TA", "grader"]}
           />
         }
       >
@@ -64,8 +80,10 @@ function App() {
         <Route path="/managestudents" element={<ManageStudents />} />
         <Route path="/bulkupload" element={<BulkUpload />} />
         <Route path="/ManageTAs" element={<ManageTAs />} />
+        <Route path="/ManageGraders" element={<ManageGraders />} />
         <Route path="/tasettings" element={<TASettings />} />
         <Route path="/studentsettings" element={<StudentSettings />} />
+        <Route path="/gradersettings" element={<GraderSettings />} />
         <Route path="/ticketview" element={<TicketView />} />
 	      <Route path="/instructorprofile" element={<InstructorProfile />} />
           <Route path="/taticketview" element={<TaTicketView />} />
@@ -81,10 +99,11 @@ function App() {
         {/* Testing Pages */}
 
         {/* Change user_id to the user's id */}
-        <Route path="/mytickets" element={<StudentTickets />} />
+        <Route path="/mytickets" element={<MyTickets />} />
         <Route path="/instructortickets" element={<InstructorTickets />} />
         <Route path="/TaRequestTickets" element={<TaRequestTickets />} />
         <Route path="/ta-info" element={<TAinfo />} />
+        <Route path="/gradertickets" element={<GraderTickets />} />
 
         {/*Verify the correct user type for dashboards*/}
         <Route
@@ -114,6 +133,15 @@ function App() {
             />
           }
         />
+          <Route
+              path="/graderdash"
+              element={
+                  <ProtectedRoute
+                      element={<GraderDash />}
+                      authorizedRoles={["grader"]}
+                  />
+              }
+          />
           {/*Manage Users pages */}
           <Route
               path="/managestudents"
@@ -138,6 +166,15 @@ function App() {
               element={
               <ProtectedRoute
               element={<ManageAdmins />}
+              authorizedRoles={["admin"]}/>
+              }
+          />
+
+          <Route
+              path="/manageGraders"
+              element={
+              <ProtectedRoute
+              element={<ManageGraders />}
               authorizedRoles={["admin"]}/>
               }
           />

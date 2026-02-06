@@ -122,7 +122,7 @@ export default function SignIn() {
                 return;
             }
 
-            const { token } = await response.json();
+            const { token, mustChangePassword } = await response.json();
 
             Cookies.set("token", token, {
                 secure: true,
@@ -144,9 +144,16 @@ export default function SignIn() {
                 console.warn('Theme event/storage failed:', error);
             }
 
+            // Check if user must change password on first login
+            if (mustChangePassword) {
+                navigate("/change-password", { state: { forced: true } });
+                return;
+            }
+
             if (userType === "admin") navigate("/admindash");
             else if (userType === "student") navigate("/studentdash");
             else if (userType === "TA") navigate("/instructordash");
+            else if (userType === "grader") navigate("/graderdash");
         } catch (e) {
             console.error(e);
             setEmailErrorMessage("Something went wrong. Please try again.");
@@ -258,7 +265,9 @@ export default function SignIn() {
                             >
                                 Sign in
                             </Button>
-                            <Typography>
+
+                            
+                            {/*<Typography>
                                 Don&apos;t have an account?{" "}
                                 <span>
                 <Link
@@ -269,7 +278,7 @@ export default function SignIn() {
                   Sign up
                 </Link>
               </span>
-                            </Typography>
+                            </Typography>*/} 
                         </Box>
                     </MuiCard>
                     {/* Sparky (right) */}

@@ -20,30 +20,67 @@ const CreateTicket = ({ onClose }) => {
   const [description, setDescription] = useState("");
   const [taList, setTaList] = useState([]); // Initialize as empty array
   const [teamList, setTeamList] = useState([]); // Initialize as empty array for teams
-  // const [asuId, setAsuId] = useState(""); 
+  const [graderList, setGraderList] = useState([]);
+
+    const [teamId, setTeamId] = useState("");
+  // const [asuId, setAsuId] = useState("");
   useEffect(() => {
-    fetchTAs();
-    fetchTeams();
+      fetchUsersByRole("TA", setTaList);
+      fetchUsersByRole("grader", setGraderList);
+      fetchTeams();
+      autoFillStudentData();
   }, []);
 
-  // Fetch TA users from the API
-  const fetchTAs = async () => {
-    try {
-      const token = Cookies.get("token");
-      const response = await fetch(`${baseURL}/api/users/role/TA`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setTaList(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Failed to fetch TAs:", error);
-      setTaList([]); // Fallback to empty array
-    }
-  };
+    // Fetches all students and picks the current one
+    const autoFillStudentData = async () => {
+        try {
+            const token = Cookies.get("token");
+            const currentUserId = Cookies.get("user_id"); // Ensure this cookie exists
+
+            const response = await fetch(`${baseURL}/api/users/role/student`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) throw new Error("Failed to fetch student profile");
+
+            const students = await response.json();
+
+            // Find the student matching the current logged-in ID
+            const me = students.find(s => String(s.user_id) === String(currentUserId));
+
+            if (me) {
+                setStudentName(me.name || "");
+                setSection(me.section || "");
+                setSponsorName(me.sponsor || "");
+                // Important: teamName state in your code stores the team_id
+                setTeamName(me.team_name || "");
+            }
+        } catch (error) {
+            console.error("Auto-fill failed:", error);
+        }
+    };
+
+    const fetchUsersByRole = async (role, setter) => {
+        try {
+            const token = Cookies.get("token");
+            const response = await fetch(`${baseURL}/api/users/role/${role}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+            setter(Array.isArray(data) ? data : []);
+        } catch (error) {
+            console.error(`Failed to fetch ${role}s:`, error);
+            setter([]);
+        }
+    };
 
   // Fetch Teams from the API
   const fetchTeams = async () => {
@@ -162,7 +199,7 @@ const CreateTicket = ({ onClose }) => {
              display: 'flex',
              justifyContent: 'center',
              alignItems: 'center',
-             zIndex: 1000,
+             Index: 1000,
              pl: '250px',
              pt: '50px',
          }}
@@ -180,8 +217,8 @@ const CreateTicket = ({ onClose }) => {
            }}
       >
         {/* Close button */}
-        <Button 
-          className="close-button" 
+        <Button
+          className="close-button"
           onClick={onClose}
           sx={{
             position: "absolute",
@@ -201,9 +238,9 @@ const CreateTicket = ({ onClose }) => {
         </Button>
 
         {/* Form Content */}
-          <Typography variant="h4" sx={{ 
-              mb: 2, 
-              fontWeight: 'bold', 
+          <Typography variant="h4" sx={{
+              mb: 2,
+              fontWeight: 'bold',
               textAlign: 'center',
               color: theme.palette.text.primary
           }}>
@@ -213,11 +250,10 @@ const CreateTicket = ({ onClose }) => {
               <TextField
                   label="Student Name"
                   variant="outlined"
-                  placeholder="Enter your name"
                   value={studentName}
                   onChange={(e) => setStudentName(e.target.value)}
-                  required
                   fullWidth
+                  disabled
               />
           {/* <label>ASU ID:</label>
           <input
@@ -231,11 +267,10 @@ const CreateTicket = ({ onClose }) => {
               <TextField
                   label="Section"
                   variant="outlined"
-                  placeholder="Enter your section"
                   value={section}
                   onChange={(e) => setSection(e.target.value)}
-                  required
                   fullWidth
+                  disabled
               />
               <FormControl fullWidth required>
                   <InputLabel>Team</InputLabel>
@@ -255,27 +290,11 @@ const CreateTicket = ({ onClose }) => {
               <TextField
                   label="Sponsor Name"
                   variant="outlined"
-                  placeholder="Enter your Sponsor's name"
                   value={sponsorName}
                   onChange={(e) => setSponsorName(e.target.value)}
-                  required
                   fullWidth
+                  disabled
               />
-              <FormControl fullWidth required>
-                  <InputLabel>Instructor (TA)</InputLabel>
-                  <Select
-                      value={instructorName}
-                      label="Instructor (TA)"
-                      placeholder="Select a instructor (TA)"
-                      onChange={(e) => setInstructorName(e.target.value)}
-                  >
-                      {taList.map((ta) => (
-                          <MenuItem key={ta.user_id} value={ta.user_id}>
-                              {ta.name}
-                          </MenuItem>
-                      ))}
-                  </Select>
-              </FormControl>
               <FormControl fullWidth required>
                   <InputLabel>Issue Type</InputLabel>
                   <Select
@@ -284,13 +303,41 @@ const CreateTicket = ({ onClose }) => {
                       placeholder="Select a issue type"
                       onChange={(e) => setIssueType(e.target.value)}
                   >
-                      <MenuItem value="sponsorIssue">Issues with Sponsor</MenuItem>
+                      <MenuItem value="sponsorIssue">Issues communicating with the Sponsor</MenuItem>
+                      <MenuItem value="sponsorWorkingIssue">Issues working with the Sponsor</MenuItem>
                       <MenuItem value="teamIssue">Issues within the Team</MenuItem>
-                      <MenuItem value="assignmentIssue">Issues with Assignments</MenuItem>
-                      <MenuItem value="Bug">Bug</MenuItem>
+                      <MenuItem value="teamMemberIssue">Issues with a team mate</MenuItem>
+                      <MenuItem value="gradeAppeal">Appeal to an assignment grade </MenuItem>
+                      <MenuItem value="extensionRequest">Request an extension for an assignment</MenuItem>
+                      <MenuItem value="accommodationRequest">Request an accommodation for the course</MenuItem>
+                      <MenuItem value="generalQuestion">General questions about the course</MenuItem>
                       <MenuItem value="Feature Request">Feature Request</MenuItem>
-                      <MenuItem value="Question">Question</MenuItem>
+                      <MenuItem value="Question">Question about this system</MenuItem>
                       <MenuItem value="other">Other</MenuItem>
+                  </Select>
+              </FormControl>
+              <FormControl fullWidth required>
+                  <InputLabel>
+                      {issueType === "gradeAppeal" ? "Assigned Grader" : "Assigned TA"}
+                  </InputLabel>
+                  <Select
+                      value={instructorName}
+                      label={issueType === "gradeAppeal" ? "Assigned Grader" : "Assigned TA"}
+                      onChange={(e) => setInstructorName(e.target.value)}
+                      disabled={!issueType} // Disable until an issue type is picked
+                  >
+                      {issueType === "gradeAppeal"
+                          ? graderList.map((grader) => (
+                              <MenuItem key={grader.user_id} value={grader.user_id}>
+                                  {grader.name} (Grader)
+                              </MenuItem>
+                          ))
+                          : taList.map((ta) => (
+                              <MenuItem key={ta.user_id} value={ta.user_id}>
+                                  {ta.name} (TA)
+                              </MenuItem>
+                          ))
+                      }
                   </Select>
               </FormControl>
               <TextField
