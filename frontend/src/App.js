@@ -34,6 +34,7 @@ import BulkUpload from "./pages/BulkUpload/BulkUpload";
 import ManageStudents from "./pages/ManageUsers/ManageStudents";
 import ManageTAs from "./pages/ManageUsers/ManageTAs";
 import ManageAdmins from "./pages/ManageUsers/ManageAdmins";
+import BugReportPage from "./pages/bugReportPage/bugReportPage";
 import ManageGraders from "./pages/ManageUsers/ManageGraders";
 import GraderDash from "./pages/GraderDash/GraderDash";
 import GraderTickets from "./pages/GraderTickets/GraderTickets";
@@ -75,6 +76,7 @@ function App() {
         <Route path="/alltickets" element={<AllTickets />} />
         <Route path="/allassignees" element={<AllAssignees />} />
         <Route path="/adminsettings" element={<AdminSettings />} />
+        <Route path="/bug-report" element={<BugReportPage />} />
         <Route path="/managestudents" element={<ManageStudents />} />
         <Route path="/bulkupload" element={<BulkUpload />} />
         <Route path="/ManageTAs" element={<ManageTAs />} />
