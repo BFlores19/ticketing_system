@@ -34,6 +34,7 @@ import BulkUpload from "./pages/BulkUpload/BulkUpload";
 import ManageStudents from "./pages/ManageUsers/ManageStudents";
 import ManageTAs from "./pages/ManageUsers/ManageTAs";
 import ManageAdmins from "./pages/ManageUsers/ManageAdmins";
+import BugReportPage from "./pages/bugReportPage/bugReportPage";
 import ManageGraders from "./pages/ManageUsers/ManageGraders";
 import GraderDash from "./pages/GraderDash/GraderDash";
 import GraderTickets from "./pages/GraderTickets/GraderTickets";
@@ -68,6 +69,7 @@ function App() {
               <Route path="/ticketinfo" element={<TicketInfo />} />
               <Route path="/instructorprofile" element={<InstructorProfile />} />
               <Route path="/mytickets" element={<MyTickets />} />
+              <Route path="/bug-report" element={<BugReportPage />} />
           </Route>
 
           <Route element={<ProtectedRoute authorizedRoles={["admin", "TA", "grader"]} />}>
