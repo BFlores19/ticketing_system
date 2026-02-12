@@ -19,6 +19,7 @@ TicketAssignment.belongsTo(User, { foreignKey: "user_id" });
 
 Ticket.hasMany(TicketAssignment, { foreignKey: "ticket_id" });
 TicketAssignment.belongsTo(Ticket, { foreignKey: "ticket_id" });
+Ticket.belongsTo(User, { foreignKey: "student_id", as: "student" });
 
 User.hasMany(BugReport, { foreignKey: "reporter_id" });
 BugReport.belongsTo(User, { foreignKey: "reporter_id", as: "reporter" });
