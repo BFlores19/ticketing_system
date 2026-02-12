@@ -4,57 +4,6 @@ const Communication = require("../models/Communication");
 const sendEmail = require('../services/emailService');
 const TaTicketAssignment = require("../models/TaTicketAssignment");
 
-const collectEscalationRecipients = async (ticket) => {
-    const recipientMap = new Map();
-
-    const addRecipient = (user) => {
-        if (!user || !user.email) return;
-        if (!user.notifications_enabled) return;
-        recipientMap.set(user.email, user);
-    };
-
-    const owner = await User.findByPk(ticket.ta_id);
-    addRecipient(owner);
-
-    const assignments = await TaTicketAssignment.findAll({
-        where: { ticket_id: ticket.ticket_id },
-    });
-
-    if (assignments.length > 0) {
-        const userIds = assignments.map((assignment) => assignment.user_id);
-        const assignedUsers = await User.findAll({
-            where: { user_id: userIds },
-        });
-        assignedUsers.forEach(addRecipient);
-    }
-
-    const admins = await User.findAll({
-        where: { role: "admin", notifications_enabled: true },
-    });
-    admins.forEach(addRecipient);
-
-    return { recipients: Array.from(recipientMap.values()), owner };
-};
-
-const collectCreationRecipients = async (owner) => {
-    const recipientMap = new Map();
-
-    const addRecipient = (user) => {
-        if (!user || !user.email) return;
-        if (!user.notifications_enabled) return;
-        recipientMap.set(user.email, user);
-    };
-
-    addRecipient(owner);
-
-    const admins = await User.findAll({
-        where: { role: "admin", notifications_enabled: true },
-    });
-    admins.forEach(addRecipient);
-
-    return Array.from(recipientMap.values());
-};
-
 exports.getAllTickets = async (req, res) => {
     try {
         // Extract pagination parameters from query string
@@ -304,21 +253,6 @@ exports.createTicket = async (req, res) => {
         // Create ticket
         const ticket = await TaTicket.create(req.body);
 
-        const recipients = await collectCreationRecipients(ta);
-        const subject = `New Ticket Created: ID ${ticket.ticket_id}`;
-        const body =
-            `A new ticket has been created.` +
-            `\n\nTicket ID: ${ticket.ticket_id}` +
-            `\nOwner: ${ta.name} (${ta.email})`;
-
-        try {
-            await Promise.all(
-                recipients.map((recipient) => sendEmail(recipient.email, subject, body))
-            );
-        } catch (emailError) {
-            console.error("Failed to send ticket creation emails:", emailError);
-        }
-
         res.status(201).json({
             ...ticket.dataValues,
             ta_name: ta.name, // Ensure correct name is returned
@@ -432,21 +366,6 @@ exports.escalateTicket = async (req, res) => {
         const ticket = await TaTicket.findByPk(req.params.ticket_id);
         if (ticket) {
             await ticket.update({ escalated: true });
-
-            const { recipients, owner } = await collectEscalationRecipients(ticket);
-            const subject = `Ticket Escalated: ID ${ticket.ticket_id}`;
-            const body =
-                `Ticket ID ${ticket.ticket_id} has been escalated to the admin team and is under review.` +
-                `${owner ? `\n\nOwner: ${owner.name} (${owner.email})` : ""}`;
-
-            try {
-                await Promise.all(
-                    recipients.map((recipient) => sendEmail(recipient.email, subject, body))
-                );
-            } catch (emailError) {
-                console.error("Failed to send escalation emails:", emailError);
-            }
-
             res.json(ticket);
         } else {
             res.status(404).json({ error: "Ticket not found" });

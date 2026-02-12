@@ -12,7 +12,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import './ChangePassword.css';
-import { passwordRequirementsText, validatePassword } from "../../utils/passwordValidator";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -62,15 +61,10 @@ const ChangePassword = () => {
       isValid = false;
     }
 
-    if (!newPassword || newPassword.trim().length === 0) {
-      setNewPasswordError("New password is required");
+    // Check new password length
+    if (!newPassword || newPassword.length < 4) {
+      setNewPasswordError("Password must be at least 4 characters");
       isValid = false;
-    } else {
-      const passwordCheck = validatePassword(newPassword);
-      if (!passwordCheck.valid) {
-        setNewPasswordError(passwordCheck.errors.join(" "));
-        isValid = false;
-      }
     }
 
     // Check confirm password provided
@@ -126,9 +120,7 @@ const ChangePassword = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        if (errorData?.error === "Password policy violation" && Array.isArray(errorData?.details)) {
-          setNewPasswordError(errorData.details.join(" "));
-        } else if (errorData.error && errorData.error.includes("Current password incorrect")) {
+        if (errorData.error && errorData.error.includes("Current password incorrect")) {
           setCurrentPasswordError("Current password is incorrect");
         } else {
           setGeneralError(errorData.error || "Failed to change password");
@@ -206,7 +198,7 @@ const ChangePassword = () => {
             <FormLabel htmlFor="newPassword">New Password</FormLabel>
             <TextField
               error={!!newPasswordError}
-              helperText={newPasswordError || passwordRequirementsText}
+              helperText={newPasswordError || "Must be at least 4 characters"}
               name="newPassword"
               placeholder="••••••"
               type={showNewPass ? "text" : "password"}

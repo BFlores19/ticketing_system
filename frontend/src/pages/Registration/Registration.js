@@ -10,7 +10,6 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import "./Registration.css";
-import { passwordRequirementsText, validatePassword } from "../../utils/passwordValidator";
 
 export default function Registration() {
   let navigate = useNavigate();
@@ -57,11 +56,6 @@ export default function Registration() {
 
       // Handele Response
       if (!response.ok) {
-        if (responseData?.error === "Password policy violation" && Array.isArray(responseData?.details)) {
-          setPasswordError(true);
-          setPasswordErrorMessage(responseData.details.join(" "));
-          return;
-        }
         setNameError(true);
         setEmailError(true);
         setPasswordError(true);
@@ -99,20 +93,13 @@ export default function Registration() {
       setEmailErrorMessage("");
     }
 
-    if (!password.value) {
+    if (!password.value || password.value.length < 4) {
       setPasswordError(true);
-      setPasswordErrorMessage("Password is required.");
+      setPasswordErrorMessage("Password must be at least 4 characters long.");
       isValid = false;
     } else {
-      const passwordCheck = validatePassword(password.value);
-      if (!passwordCheck.valid) {
-        setPasswordError(true);
-        setPasswordErrorMessage(passwordCheck.errors.join(" "));
-        isValid = false;
-      } else {
-        setPasswordError(false);
-        setPasswordErrorMessage("");
-      }
+      setPasswordError(false);
+      setPasswordErrorMessage("");
     }
 
     if (!name.value || name.value.length < 1) {
@@ -193,7 +180,7 @@ export default function Registration() {
             </Box>
             <TextField
               error={passwordError}
-              helperText={passwordErrorMessage || passwordRequirementsText}
+              helperText={passwordErrorMessage}
               name="password"
               placeholder="••••••"
               type={showPass ? "text" : "password"}
