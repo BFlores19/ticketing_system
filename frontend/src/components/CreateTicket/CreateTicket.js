@@ -57,7 +57,7 @@ const CreateTicket = ({ onClose }) => {
                 setSection(me.section || "");
                 setSponsorName(me.sponsor || "");
                 // Important: teamName state in your code stores the team_id
-                // setTeamName(me.team_name || "");
+                setTeamName(me.team_name || "");
             }
         } catch (error) {
             console.error("Auto-fill failed:", error);
@@ -199,7 +199,7 @@ const CreateTicket = ({ onClose }) => {
              display: 'flex',
              justifyContent: 'center',
              alignItems: 'center',
-             zIndex: 1000,
+             Index: 1000,
              pl: '250px',
              pt: '50px',
          }}
@@ -254,21 +254,6 @@ const CreateTicket = ({ onClose }) => {
                   onChange={(e) => setStudentName(e.target.value)}
                   fullWidth
                   disabled
-                  slotProps={{
-                      input: {
-                          readOnly: true,
-                      },
-                  }}
-                  sx={{
-                      "& .MuiInputBase-input.Mui-disabled": {
-                          WebkitTextFillColor: theme.palette.text.primary, // Keeps text black/dark
-                      },
-                      "& .MuiOutlinedInput-root.Mui-disabled": {
-                          "& fieldset": {
-                              borderColor: "rgba(0, 0, 0, 0.23)", // Keeps the border solid instead of dashed
-                          },
-                      },
-                  }}
               />
           {/* <label>ASU ID:</label>
           <input
@@ -286,51 +271,13 @@ const CreateTicket = ({ onClose }) => {
                   onChange={(e) => setSection(e.target.value)}
                   fullWidth
                   disabled
-                  slotProps={{
-                      input: {
-                          readOnly: true,
-                      },
-                  }}
-                  sx={{
-                      "& .MuiInputBase-input.Mui-disabled": {
-                          WebkitTextFillColor: theme.palette.text.primary, // Keeps text black/dark
-                      },
-                      "& .MuiOutlinedInput-root.Mui-disabled": {
-                          "& fieldset": {
-                              borderColor: "rgba(0, 0, 0, 0.23)", // Keeps the border solid instead of dashed
-                          },
-                      },
-                  }}
-              />
-              <TextField
-                  label="Sponsor Name"
-                  variant="outlined"
-                  value={sponsorName}
-                  onChange={(e) => setSponsorName(e.target.value)}
-                  fullWidth
-                  disabled
-                  slotProps={{
-                      input: {
-                          readOnly: true,
-                      },
-                  }}
-                  sx={{
-                      "& .MuiInputBase-input.Mui-disabled": {
-                          WebkitTextFillColor: theme.palette.text.primary, // Keeps text black/dark
-                      },
-                      "& .MuiOutlinedInput-root.Mui-disabled": {
-                          "& fieldset": {
-                              borderColor: "rgba(0, 0, 0, 0.23)", // Keeps the border solid instead of dashed
-                          },
-                      },
-                  }}
               />
               <FormControl fullWidth required>
-                  <InputLabel id="team-label">Team</InputLabel> {/* Add an ID here */}
+                  <InputLabel>Team</InputLabel>
                   <Select
-                      labelId="team-label" // Connect the label ID
                       value={teamName}
                       label="Team"
+                      placeholder="Select a team"
                       onChange={(e) => setTeamName(e.target.value)}
                   >
                       {teamList.map((team) => (
@@ -340,6 +287,14 @@ const CreateTicket = ({ onClose }) => {
                       ))}
                   </Select>
               </FormControl>
+              <TextField
+                  label="Sponsor Name"
+                  variant="outlined"
+                  value={sponsorName}
+                  onChange={(e) => setSponsorName(e.target.value)}
+                  fullWidth
+                  disabled
+              />
               <FormControl fullWidth required>
                   <InputLabel>Issue Type</InputLabel>
                   <Select
